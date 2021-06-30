@@ -1,0 +1,81 @@
+  
+// SPDX-License-Identifier: GPL-2.0-only
+/*
+ * Copyright (C) 2012 Texas Instruments Incorporated - http://www.ti.com/
+ */
+
+/dts-v1/;
+/plugin/;
+
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/pinctrl/am33xx.h>
+#include <dt-bindings/board/am335x-bbw-bbb-base.h>
+/ {
+	/*
+	 * Helper to show loaded overlays under: /proc/device-tree/chosen/overlays/
+	 */
+
+    compatible = "ti,beaglebone", "ti,beaglebone-black", "ti,beaglebone-green";
+
+	/* identification */
+	part-number = "BB-ETH-LAN8720";
+	version = "00A0";
+
+	fragment@0 {
+		target-path="/";
+		__overlay__ {
+
+			chosen {
+				overlays {
+					BB-ETH-LAN8720-00A0 = __TIMESTAMP__;
+				};
+			};
+		};
+	};
+
+    fragment@2 {
+		target = <&am33xx_pinmux>;
+        __overlay__ {
+            cpsw_default {
+		        pinctrl-single,pins = <
+                    /* Slave 1 */
+					AM33XX_IOPAD(0x910, PIN_INPUT_PULLUP | MUX_MODE1)         /* mii1_rxee.rmii1_rxee */
+                    AM33XX_IOPAD(0x90c, PIN_INPUT_PULLDOWN | MUX_MODE1)       /* mii1_crs.rmii1_crs_dv */
+                    AM33XX_IOPAD(0x914, PIN_OUTPUT_PULLDOWN | MUX_MODE1)      /* mii1_tx_en.rmii1_txen */
+                    AM33XX_IOPAD(0x924, PIN_OUTPUT_PULLDOWN | MUX_MODE1)      /* mii1_txd1.rmii1_txd1 */
+                    AM33XX_IOPAD(0x928, PIN_OUTPUT_PULLDOWN | MUX_MODE1)      /* mii1_txd0.rmii1_txd0 */
+                    AM33XX_IOPAD(0x93c, PIN_INPUT_PULLDOWN | MUX_MODE1)      /* mii1_rxd1.rmii1_rxd1 */
+                    AM33XX_IOPAD(0x940, PIN_INPUT_PULLDOWN | MUX_MODE1)      /* mii1_rxd0.rmii1_rxd0 */
+                    AM33XX_IOPAD(0x944, PIN_INPUT_PULLDOWN | MUX_MODE0)      /* rmii1_ref_clk.rmii1_refclk */
+                >;
+            };
+            psw_sleep {
+		        pinctrl-single,pins = <
+                    /* Slave 1 reset value */
+					AM33XX_IOPAD(0x910, PIN_INPUT_PULLDOWN | MUX_MODE7)
+                    AM33XX_IOPAD(0x90c, PIN_INPUT_PULLDOWN | MUX_MODE7)
+                    AM33XX_IOPAD(0x914, PIN_INPUT_PULLDOWN | MUX_MODE7)
+                    AM33XX_IOPAD(0x924, PIN_INPUT_PULLDOWN | MUX_MODE7)
+                    AM33XX_IOPAD(0x928, PIN_INPUT_PULLDOWN | MUX_MODE7)
+                    AM33XX_IOPAD(0x93c, PIN_INPUT_PULLDOWN | MUX_MODE7)
+                    AM33XX_IOPAD(0x940, PIN_INPUT_PULLDOWN | MUX_MODE7)
+                    AM33XX_IOPAD(0x944, PIN_INPUT_PULLDOWN | MUX_MODE7)
+		        >;
+	        };
+        };
+    };
+    fragment@3 {
+        target = <&cpsw_emac0>;
+		__overlay__ {
+			phy_id = <&davinci_mdio>, <1>;
+			phy-mode = "rmii";
+		};
+    };
+	fragment@4 {
+        target = <&phy_sel>;
+		__overlay__ {
+			rmii-clock-ext = <1>;
+		};
+    };
+};
+        
